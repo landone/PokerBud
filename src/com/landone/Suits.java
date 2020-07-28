@@ -13,6 +13,16 @@ public enum Suits {
 		value = val;
 	}
 	
+	public static Suits toSuit(int val) {
+		
+		if (val < 0 || val > MAX_SUITS.value) {
+			return SPADE;
+		}
+		
+		return Suits.values()[val];
+		
+	}
+	
 	public String toString() {
 		
 		return toString(value);

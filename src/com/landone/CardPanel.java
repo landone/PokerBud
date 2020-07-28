@@ -5,6 +5,7 @@ import java.awt.event.ActionListener;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
+import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -12,15 +13,20 @@ import javax.swing.JPanel;
 
 public class CardPanel implements ActionListener {
 	
-	private JPanel panel = new JPanel();
+	private JPanel mainPanel = new JPanel();
+	private JPanel[] otherPanels = new JPanel[3];//{Suit, Type, Options}
 	private JButton[] suits = new JButton[Suits.MAX_SUITS.value];
-	private JButton[] cards = new JButton[Cards.MAX_CARDS.value];
+	private JButton[] cards = new JButton[CardType.MAX_CARDS.value];
 	private int[] selected = new int[2];//[card, suit]
 	private JButton[] options = new JButton[2]; //Cancel, Continue
 	
 	
 	public CardPanel() {
 		
+		mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
+		otherPanels[0] = new JPanel();
+		otherPanels[1] = new JPanel();
+		otherPanels[2] = new JPanel();
 		selected[0] = -1;
 		selected[1] = -1;
 		
@@ -35,25 +41,29 @@ public class CardPanel implements ActionListener {
 				e.printStackTrace();
 			}
 			
-			panel.add(suits[i]);
+			otherPanels[0].add(suits[i]);
 			suits[i].addActionListener(this);
 			
 		}
 		
-		for (int i = 0; i < Cards.MAX_CARDS.value; i++) {
+		for (int i = 0; i < CardType.MAX_CARDS.value; i++) {
 			
-			cards[i] = new JButton(Cards.toString(i));
-			panel.add(cards[i]);
+			cards[i] = new JButton(CardType.toString(i));
+			otherPanels[1].add(cards[i]);
 			cards[i].addActionListener(this);
 			
 		}
 		
 		options[0] = new JButton("Cancel");
-		panel.add(options[0]);
+		otherPanels[2].add(options[0]);
 		options[0].addActionListener(this);
 		options[1] = new JButton("Continue");
-		panel.add(options[1]);
+		otherPanels[2].add(options[1]);
 		options[1].addActionListener(this);
+		
+		for (int i = 0; i < 3; i++) {
+			mainPanel.add(otherPanels[i]);
+		}
 		
 	}
 	
@@ -62,7 +72,7 @@ public class CardPanel implements ActionListener {
 		selected[0] = -1;
 		selected[1] = -1;
 		setEnabledAll(true);
-		frame.setContentPane(panel);
+		frame.setContentPane(mainPanel);
 		frame.setVisible(true);
 		
 	}
@@ -88,17 +98,17 @@ public class CardPanel implements ActionListener {
 		if (ref == options[0]) {
 			//Cancel
 			setEnabledAll(false);
-			PokerBud.cardSelected();
+			PokerBud.cardSelected(null);
 			return;
 		}
 		else if (ref == options[1]) {
 			if (selected[0] == -1 || selected[1] == -1) {
-				System.out.println("No card selected");
+				//No card selected
 			}
 			else {
 				//Continue
 				setEnabledAll(false);
-				PokerBud.cardSelected();
+				PokerBud.cardSelected(new Card(selected[0], selected[1]));
 			}
 			return;
 		}
@@ -113,7 +123,7 @@ public class CardPanel implements ActionListener {
 				break;
 			}
 		}
-		for (int i = 0; i < Cards.MAX_CARDS.value; i++) {
+		for (int i = 0; i < CardType.MAX_CARDS.value; i++) {
 			if (cards[i] == ref) {
 				index = i;
 				break;

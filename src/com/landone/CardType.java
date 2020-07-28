@@ -1,6 +1,6 @@
 package com.landone;
 
-public enum Cards {
+public enum CardType {
 	ACE(0),
 	TWO(1),
 	THREE(2),
@@ -18,8 +18,24 @@ public enum Cards {
 	
 	public int value;
 	
-	Cards(int val) {
+	CardType(int val) {
 		value = val;
+	}
+	
+	public static CardType toCard(int value) {
+		
+		if (value < 0 || value > MAX_CARDS.value) {
+			return ACE;
+		}
+		
+		return CardType.values()[value];
+		
+	}
+	
+	public String toString() {
+		
+		return toString(value);
+		
 	}
 	
 	public static String toString(int val) {
